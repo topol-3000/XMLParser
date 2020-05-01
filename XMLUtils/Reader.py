@@ -10,8 +10,8 @@ from  XMLUtils.CreatorXML import CreatorXML
 TAG_CATEGORY = 'catalog'
 TAG_PRODUCT = 'items'
 
-IMAGES_DIRECTORY = '\\images\\' + str(datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
-IMAGE_PREFIX = '\\catalog\\import_images\\'
+IMAGES_DIRECTORY = '/Images/' + str(datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
+IMAGE_PREFIX = '/catalog/import_images/'
 IMAGE_PREFIX_FOR_SERVER = 'catalog/import_images/'
 
 class Reader:
@@ -20,7 +20,7 @@ class Reader:
     def __init__(self, directory, xml_path):
         self.__directory = directory
         self.__categoryCatalog = CategoryCatalog()
-        self.__creatorXML = CreatorXML(directory + '\\resourses\import_for_opencart.xml')
+        self.__creatorXML = CreatorXML(directory + '/resourses/import_for_opencart.xml')
 
         tree = ET.parse(directory + xml_path)
         self.root = tree.getroot()
@@ -47,8 +47,9 @@ class Reader:
             )
             self.__creatorXML.writeProduct(product)
             print(f'Загружено {index} товаров из {count_products}')
+            if index == 3:
+                break
         self.__creatorXML.prettify()
-        sys.exit(99)
 
     @property
     def root_element(self):
