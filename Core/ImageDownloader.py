@@ -1,11 +1,8 @@
-import os
 import requests
 
-def createDirectory(directory):
-    os.makedirs(directory)
 
-def downloadImageByUrl(url, filename):
-    with open(filename, 'wb') as handle:
+def downloadImageByUrl(url, file_path):
+    with open(file_path, 'wb') as handle:
         response = requests.get(url, stream = True)
         if not response.ok:
             return False
