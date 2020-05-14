@@ -42,8 +42,10 @@ class Handler:
     def __handleImages(self):
         dir_separator = Conf.get(section='General', prop='DirSeparator')
         dir_separator_on_server = Conf.get(section='General', prop='ServerDirSeparator')
-        for product in self.__product_list:
+        gen = (product for product in self.__product_list if product.image_url is not None)
+        for product in gen:
             image_name = product.getImageNameFromUrl()
+            print(self._images_dir, dir_separator, image_name)
             local_image_path = (self._images_dir + dir_separator + image_name)
 
             result = ImageDownloader.downloadImageByUrl(url=product.image_url,
@@ -55,7 +57,7 @@ class Handler:
                     image_path_on_server = image_path_on_server[1:]
                 if image_path_on_server[-1] == dir_separator_on_server:
                     image_path_on_server = image_path_on_server[:-1]
-
+                print(image_path_on_server, dir_separator_on_server, image_name)
                 product.image_path = (image_path_on_server + dir_separator_on_server + image_name)
                 continue
             print(f'Image {product.image_url} was not downloaded.\n{product}')

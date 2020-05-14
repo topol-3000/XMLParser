@@ -6,9 +6,9 @@ class Product:
     """Model for product.
 
     Attributes:
-        id (int): Id of product.
+        id (str): Id of product.
         name (str): Name of product.
-        category_id (int): Id of category.
+        category_id (str): Id of category.
         price (float): Price of product.
         image_url (str): url to image.
         manufacturer (str): manufacturer of product.
@@ -21,9 +21,9 @@ class Product:
         meta_title (str): meta string for product.
 
     Args:
-        id (int): Id of product.
+        id (str): Id of product.
         name (str): Name of product.
-        category_id (int): Id of category.
+        category_id (str): Id of category.
         price (float): Price of product.
         image_url (str): url to image.
         manufacturer (str): manufacturer of product.

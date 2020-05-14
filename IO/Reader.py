@@ -2,11 +2,11 @@ import lxml.etree as ET
 from Models.Product import Product
 from Models.Category import Category
 
-TAG_CATEGORIES = 'catalog'
-TAG_PRODUCTS = 'items'
+TAG_CATEGORIES = 'categories'
+TAG_PRODUCTS = 'offers'
 TAG_PRODUCT_ID = 'id'
 TAG_PRODUCT_NAME = 'name'
-TAG_PRODUCT_IMAGE = 'image'
+TAG_PRODUCT_IMAGE = 'picture'
 TAG_PRODUCT_PRICE = 'price_trade'
 TAG_PRODUCT_CATEGORY = 'categoryId'
 TAG_PRODUCT_MANUFACTURER = 'vendor'
@@ -18,16 +18,16 @@ class Reader:
     def __init__(self, xml_path):
         tree = ET.parse(xml_path)
         self.__root = tree.getroot()
-        self.__product_list = self.__root.find(TAG_PRODUCTS)
+        self.__product_list = self.__root.find('shop').find(TAG_PRODUCTS)
 
     def read(self):
         return self.__getCategoryList(), self.__getProductList()
 
     def __getCategoryList(self):
         category_list = []
-        for category in self.__root.find(TAG_CATEGORIES):
-            parent = int(category.attrib['parentId']) if 'parentId' in category.attrib else None
-            category = Category(id = int(category.attrib['id']),
+        for category in self.__root.find('shop').find(TAG_CATEGORIES):
+            parent = category.attrib['parentId'] if 'parentId' in category.attrib else None
+            category = Category(id = category.attrib['id'],
                                 name = category.text,
                                 parent_id = parent)
             category_list.append(category)
@@ -52,7 +52,7 @@ class Reader:
     @staticmethod
     def __getProductCategoryId(product):
         category = product.find(TAG_PRODUCT_CATEGORY)
-        return int(category.text) if category is not None else None
+        return category.text if category is not None else None
 
     @staticmethod
     def __getProductImage(product):
@@ -62,8 +62,8 @@ class Reader:
     @staticmethod
     def __getProductId(product):
         if TAG_PRODUCT_ID in product.attrib:
-            return int(product.attrib[TAG_PRODUCT_ID])
-        return -1
+            return product.attrib[TAG_PRODUCT_ID]
+        return '-1'
 
     @staticmethod
     def __getProductName(product):

@@ -2,14 +2,14 @@ class Category:
     """Model for category.
 
     Attributes:
-        id (int): Id of product.
+        id (str): Id of product.
         name (str): Name of product.
-        parent_id (int|None): Id of category.
+        parent_id (str|None): Id of category.
 
     Args:
-        id (int): id of category.
+        id (str): id of category.
         name (str): name of category.
-        parent_id (int|None): id of parent category for current category.
+        parent_id (str|None): id of parent category for current category.
 
     """
     def __init__(self, id, name, parent_id):
