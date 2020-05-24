@@ -19,6 +19,7 @@ class Writer:
         root = tree.getroot()
         for product in product_list:
             self.__writeProduct(root, product)
+            print(f'{product.id} has been written')
         tree.write(self._filename)
         self.__prettify()
 
@@ -65,11 +66,3 @@ class Writer:
     def __prettify(self):
         tree = ET.parse(self._filename)
         tree.write(self._filename, pretty_print=True, encoding='utf-8', xml_declaration=True)
-        self.rep()
-
-    def rep(self):
-        # with open(self._filename) as f:
-        #     for i in f.readlines():
-        #         i = i.replace('&gt;', '->-')
-        #         print(i)
-        pass
