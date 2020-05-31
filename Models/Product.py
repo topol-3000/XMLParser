@@ -44,13 +44,9 @@ class Product:
         self.quantity = quantity
         self.date_available = datetime.now().strftime('%Y-%m-%d')
         self.store = 'default;'
-        self.meta_title = 'meta_title_' + str(random.randint(0, 100000))
         self.category_chain = None
         self.image_path = None
-
-    def getImageNameFromUrl(self):
-        if self.image_url is not None:
-            return self.image_url.split('/')[-1]
+        self.category_list = None
 
     def __str__(self):
         return f'Product(\n' \
@@ -65,6 +61,5 @@ class Product:
                f'\t{self.quantity=};\n' \
                f'\t{self.date_available=};\n' \
                f'\t{self.store=};\n' \
-               f'\t{self.meta_title=};\n' \
                f'\t{self.image_path=};\n' \
                f'\t)\n'

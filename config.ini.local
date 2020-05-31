@@ -1,5 +1,5 @@
 [General]
-DirSeparator: \
+DirSeparator: /
 ServerDirSeparator: /
 InputXML: resourses${DirSeparator}example.xml
 OutputXML: resourses${DirSeparator}import_for_opencart_prom.xml

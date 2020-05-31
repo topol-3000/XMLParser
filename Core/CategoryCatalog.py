@@ -66,6 +66,31 @@ class CategoryCatalog:
         else:
             return
 
+    def getCategorylistByChain(self, chain):
+        """Get Category list for category chain.
+
+        Args:
+            chain (string): category chain. For example 'САДОВОЕ ОБОРУДОВАНИЕ>ОПРЫСКИВАТЕЛИ>РУЧНЫЕ'
+
+        Returns:
+            str: string of list categories 'САДОВОЕ ОБОРУДОВАНИЕ;САДОВОЕ ОБОРУДОВАНИЕ>ОПРЫСКИВАТЕЛИ;САДОВОЕ ОБОРУДОВАНИЕ>ОПРЫСКИВАТЕЛИ>РУЧНЫЕ;САДОВОЕ ОБОРУДОВАНИЕ>ОПРЫСКИВАТЕЛИ>РУЧНЫЕ>FORTE'
+
+        """
+        if chain:
+            result = [chain]
+            while True:
+                last = chain.rfind(self.nesting_symbol)
+                if last == -1:
+                    break
+                tempCategory = chain[0:last]
+                chain = chain[0:last]
+                result.append(tempCategory)
+            result.reverse()
+            return ';'.join(result)
+
+        else:
+            return ''
+
     def show(self):
         top_categories = []
         for cat in self.__categories:

@@ -9,7 +9,7 @@ TAG_PRODUCT_NAME = 'name'
 TAG_PRODUCT_IMAGE = 'picture'
 TAG_PRODUCT_PRICE = 'price'
 TAG_PRODUCT_CATEGORY = 'categoryId'
-TAG_PRODUCT_MANUFACTURER = 'vendor'
+TAG_PRODUCT_MANUFACTURER = 'brand'
 TAG_PRODUCT_DESCRIPTION = 'description'
 TAG_PRODUCT_QUANTITY = 'quantity'
 
@@ -47,6 +47,7 @@ class Reader:
                 quantity = self.__getProductQuantity(product_item)
             )
             product_list.append(product)
+
         return product_list
 
     @staticmethod
@@ -104,4 +105,4 @@ class Reader:
                 # 1,000 -> 1
                 return int(quantity.text.split(',')[0])
             return int(quantity.text)
-        return 1
+        return 5

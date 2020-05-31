@@ -34,7 +34,7 @@ def main():
 
 if __name__ == "__main__":
     main()
-    input()
+    input('Нажмите любую клавишу чтобы выйти')
 
 
 # TODO print -> logger

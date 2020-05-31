@@ -1,7 +1,8 @@
 import os
+from queue import Queue
 import Conf
-from Core import ImageDownloader
 from Core.CategoryCatalog import CategoryCatalog
+from Network.Downloader import Downloader
 
 
 class Handler:
@@ -38,25 +39,45 @@ class Handler:
                 continue
             else:
                 product.category_chain = self.__categoryCatalog.getCategoryChain(category)
+                product.category_list = self.__categoryCatalog.getCategorylistByChain(product.category_chain)
 
     def __handleImages(self):
-        dir_separator = Conf.get(section='General', prop='DirSeparator')
-        dir_separator_on_server = Conf.get(section='General', prop='ServerDirSeparator')
-        gen = (product for product in self.__product_list if product.image_url is not None)
-        for product in gen:
-            image_name = product.getImageNameFromUrl()
-            local_image_path = (self._images_dir + dir_separator + image_name)
+        queue = Queue()
 
-            result = ImageDownloader.downloadImageByUrl(url=product.image_url,
-                                                        file_path=local_image_path)
-            if result:
-                image_path_on_server = Conf.get(section='ImageDownloading',
-                                                prop='ImagesPathOnServer')
-                if image_path_on_server[0] == dir_separator_on_server:
-                    image_path_on_server = image_path_on_server[1:]
-                if image_path_on_server[-1] == dir_separator_on_server:
-                    image_path_on_server = image_path_on_server[:-1]
-                product.image_path = (image_path_on_server + dir_separator_on_server + image_name)
-                print(f'Image {product.image_url} has been downloaded.')
-                continue
-            print(f'Image {product.image_url} has not been downloaded.\n{product}')
+        # Запускаем потоки и очередь
+        for i in range(10):
+            t = Downloader(queue)
+            t.setDaemon(True)
+            t.start()
+        self.__fillImageQueue(queue)
+
+        # Ждем завершения работы очереди
+        queue.join()
+
+    @staticmethod
+    def onSuccessImageDownload(product):
+        dir_separator_on_server = Conf.get(section='General', prop='ServerDirSeparator')
+        image_name = os.path.basename(product.image_url)
+        image_path_on_server = Conf.get(section='ImageDownloading',
+                                        prop='ImagesPathOnServer')
+        if image_path_on_server[0] == dir_separator_on_server:
+            image_path_on_server = image_path_on_server[1:]
+        if image_path_on_server[-1] == dir_separator_on_server:
+            image_path_on_server = image_path_on_server[:-1]
+        product.image_path = (image_path_on_server + dir_separator_on_server + image_name)
+        print(f'Image {product.image_url} has been downloaded.')
+
+    def __fillImageQueue(self, queue):
+        # Даем очереди нужные нам ссылки для скачивания
+        gen = (product for product in self.__product_list if product.image_url is not None)
+        for product_item in gen:
+            dir_separator = Conf.get(section='General', prop='DirSeparator')
+            image_name = os.path.basename(product_item.image_url)
+            local_image_path = (self._images_dir + dir_separator + image_name)
+            task = {
+                'url': product_item.image_url,
+                'file_path': local_image_path,
+                'on_success_cb': self.onSuccessImageDownload,
+                'cb_args': product_item
+            }
+            queue.put(task)
