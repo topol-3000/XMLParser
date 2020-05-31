@@ -1,6 +1,0 @@
-.gitignore
-config.ini
-venv
-Images
-resourses
-!resourses/example.xml
