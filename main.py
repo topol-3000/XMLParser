@@ -1,4 +1,5 @@
 import os
+import traceback
 from datetime import datetime
 import Conf
 from IO.Reader import Reader
@@ -33,7 +34,10 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as e:
+        print('Ошибка:\n', traceback.format_exc())
     input('Нажмите любую клавишу чтобы выйти')
 
 

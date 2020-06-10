@@ -2,11 +2,11 @@ import lxml.etree as ET
 from Models.Product import Product
 from Models.Category import Category
 
-TAG_CATEGORIES = 'categories'
-TAG_PRODUCTS = 'offers'
+TAG_CATEGORIES = ['categories', 'catalog']
+TAG_PRODUCTS = ['offers', 'items']
 TAG_PRODUCT_ID = 'id'
 TAG_PRODUCT_NAME = 'name'
-TAG_PRODUCT_IMAGE = 'picture'
+TAG_PRODUCT_IMAGE = ['picture', 'image']
 TAG_PRODUCT_PRICE = 'price'
 TAG_PRODUCT_CATEGORY = 'categoryId'
 TAG_PRODUCT_MANUFACTURER = 'brand'
@@ -18,14 +18,36 @@ class Reader:
     def __init__(self, xml_path):
         tree = ET.parse(xml_path)
         self.__root = tree.getroot()
-        self.__product_list = self.__root.find('shop').find(TAG_PRODUCTS)
+        self.__product_list = self.__getProductListElement()
+
+    def __getProductListElement(self):
+        if self.__root.find('shop') is not None:
+            for tag in TAG_PRODUCTS:
+                if self.__root.find('shop').find(tag) is not None:
+                    return self.__root.find('shop').find(tag)
+        else:
+            for tag in TAG_PRODUCTS:
+                if self.__root.find(tag) is not None:
+                    return self.__root.find(tag)
+        return False
+
+    def __getCategoryListElement(self):
+        if self.__root.find('shop') is not None:
+            for tag in TAG_CATEGORIES:
+                if self.__root.find('shop').find(tag) is not None:
+                    return self.__root.find('shop').find(tag)
+        else:
+            for tag in TAG_CATEGORIES:
+                if self.__root.find(tag) is not None:
+                    return self.__root.find(tag)
+        return False
 
     def read(self):
         return self.__getCategoryList(), self.__getProductList()
 
     def __getCategoryList(self):
         category_list = []
-        for category in self.__root.find('shop').find(TAG_CATEGORIES):
+        for category in self.__getCategoryListElement():
             parent = category.attrib['parentId'] if 'parentId' in category.attrib else None
             category = Category(id = category.attrib['id'],
                                 name = category.text,
@@ -57,8 +79,10 @@ class Reader:
 
     @staticmethod
     def __getProductImage(product):
-        image_url = product.find(TAG_PRODUCT_IMAGE).text
-        return image_url
+        for tag in TAG_PRODUCT_IMAGE:
+            if product.find(tag) is not None:
+                image_url = product.find(tag).text
+                return image_url
 
     @staticmethod
     def __getProductId(product):
